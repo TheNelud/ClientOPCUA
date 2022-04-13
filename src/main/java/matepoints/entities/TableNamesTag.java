@@ -2,10 +2,11 @@ package points.entities;
 
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tb_tag_name")
-public class TagName {
+public class TableNamesTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +19,16 @@ public class TagName {
     @Column(name = "in_out")
     private String inOut;
 
-    public TagName(){}
+    public TableNamesTag(){}
 
-    public TagName(String tagName, String inOut) {
+    public TableNamesTag(String tagName, String inOut) {
         this.tagName = tagName;
         this.inOut = inOut;
     }
 
     @Override
     public String toString() {
-        return "TagName{" +
+        return "TableNamesTag{" +
                 "id=" + id +
                 ", tagName='" + tagName + '\'' +
                 ", inOut='" + inOut + '\'' +
@@ -56,5 +57,13 @@ public class TagName {
 
     public void setInOut(String inOut) {
         this.inOut = inOut;
+    }
+
+
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, tagName, inOut);
     }
 }

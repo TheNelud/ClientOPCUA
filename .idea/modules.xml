@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-generator/bsd-generator.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-generator/bsd-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/milo-examples/client-examples/client-examples.iml" filepath="$PROJECT_DIR$/../milo-master/milo-examples/client-examples/client-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-manager/dictionary-manager.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-manager/dictionary-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/integration-tests/integration-tests.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/integration-tests/integration-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-core/src/main/main.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-core/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-server/src/main/main1.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-server/src/main/main1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-reader/src/main/main2.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-reader/src/main/main2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser/src/main/main3.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser/src/main/main3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-core/src/main/main4.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-core/src/main/main4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser-gson/src/main/main5.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser-gson/src/main/main5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-client/sdk-client.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-client/sdk-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-tests/sdk-tests.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-tests/sdk-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/milo-examples/server-examples/server-examples.iml" filepath="$PROJECT_DIR$/../milo-master/milo-examples/server-examples/server-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-client/stack-client.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-client/stack-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-server/stack-server.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-server/stack-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-tests/stack-tests.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-tests/stack-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser-gson/src/test/test.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser-gson/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-core/src/test/test1.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-core/src/test/test1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser/src/test/test2.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/bsd-parser/src/test/test2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-core/src/test/test3.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-stack/stack-core/src/test/test3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-reader/src/test/test4.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/dictionary-reader/src/test/test4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-server/src/test/test5.iml" filepath="$PROJECT_DIR$/../milo-master/opc-ua-sdk/sdk-server/src/test/test5.iml" />
+    </modules>
+  </component>
+</project>
