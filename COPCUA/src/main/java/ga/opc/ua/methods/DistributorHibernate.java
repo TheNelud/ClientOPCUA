@@ -8,7 +8,7 @@ import org.hibernate.SessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Distributor {
+public class DistributorHibernate {
     private final SessionFactory factory =  new Configuration()
             .configure("hibernate.cfg.xml")
             .addAnnotatedClass(TestTable.class)
@@ -16,7 +16,7 @@ public class Distributor {
     private final Session session = factory.getCurrentSession();
 
 
-    public List<String> getTagList() {
+    public void getTagList() {
         List<String> tagList = new ArrayList<>();
         try {
             session.beginTransaction();
@@ -24,14 +24,13 @@ public class Distributor {
             List<TestTable> tableNamesTagList = session.createQuery("from TestTable", TestTable.class)
                     .getResultList();
 
-            for (TestTable tableNamesTag : tableNamesTagList){
-                tagList.add(String.valueOf(tableNamesTag));
+            for (TestTable testTable : tableNamesTagList){
+                System.out.println(testTable);
             }
 
             session.getTransaction().commit();
         } finally {
             factory.close();
         }
-        return tagList;
     }
 }

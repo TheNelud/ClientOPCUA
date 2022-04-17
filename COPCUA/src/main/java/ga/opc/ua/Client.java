@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Client {
     default String getEndpointUrl() {
-        return "opc.tcp://localhost:49320";
+        return "opc.tcp://172.16.205.234:62544";
     }
 
     default SecurityPolicy getSecurityPolicy() {

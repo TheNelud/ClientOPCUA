@@ -17,6 +17,13 @@ public class TestTable {
     @Column(name = "inout")
     private String inout;
 
+    public TestTable() {}
+
+    public TestTable(String hfrpok, String inout) {
+        this.hfrpok = hfrpok;
+        this.inout = inout;
+    }
+
     public int getId() {
         return id;
     }

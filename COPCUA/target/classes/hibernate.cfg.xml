@@ -4,10 +4,10 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:postgresql://172.16.205.51:5432/journal_kovikta?useSSL=false</property>
+        <property name="connection.url">jdbc:postgresql://127.0.0.1:5432/journal_kovikta?useSSL=false</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="connection.username">postgres</property>
-        <property name="connection.password">Potok_DU</property>
+        <property name="connection.password">0000</property>
 
         <property name="current_session_context_class">thread</property>
         <property name="dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
