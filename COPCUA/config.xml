@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <USER_DB>postgres</USER_DB>
-    <PASS_DB>Potok_DU</PASS_DB>
-    <URL_DB>jdbc:postgresql://172.16.205.51:5432/journal_kovikta</URL_DB>
-    <IP_OPC>172.16.205.234</IP_OPC>
-    <PORT_OPC>62544</PORT_OPC>
+    <PASS_DB>postgres</PASS_DB>
+    <URL_DB>jdbc:postgresql://127.0.0.1:5432/journal_kovikta</URL_DB>
+    <IP_OPC>127.0.0.1</IP_OPC>
+    <PORT_OPC>49320</PORT_OPC>
     <PERIOD>10</PERIOD>
 </root>
