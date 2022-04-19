@@ -9,6 +9,21 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws SQLException {
+
+
+    }
+
+
+
+
+    /*
+    * Это просто неообразимо круто получается типо:
+    * 1 : {1:name1
+    *     2:surname1}
+    * 2 : {1:name2
+    *      2:surname2}
+    * и тд.*/
+    public void perfectMagicMaps() throws SQLException{
         int count = 1;
         Map<Integer, Map<Integer, String>> externalMap = new HashMap<>();
         Map<Integer, String> insideMap = new HashMap<>();
@@ -32,14 +47,12 @@ public class Test {
                 System.out.println(entryInside.getKey() + " : " + entryInside.getValue());
             }
         }
-
+        resultSet.close();
+        statement.close();
     }
 
 
-
-
-
-
+    /*Просто перекладываем изодной таблицы в другую*/
     public void magicSelectInsert() throws SQLException {
         String sqlSelect = "SELECT hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
         String sqlInsert = "INSERT INTO app_info.tagname_request(hfrpok, inout, guid_masdu_5min, guid_masdu_1hour, guid_masdu_1day) VALUES( ?, ?, ?, ?, ?)";
