@@ -10,7 +10,7 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DistributorJdbc {
+public class DistributorJdbc{
 
     private static String USER_DB;
     private static String PASS_DB;
@@ -50,7 +50,7 @@ public class DistributorJdbc {
     }
     public void insertInDb1day(String guid_masdu_1day, String hfrpok, String value) throws SQLException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsertTagValues = "INSERT INTO app_info.one_hour_day(timestamp, guid_masdu_1day, hfrpok, value) VALUES( ?, ?, ?, ?)";
+        String sqlInsertTagValues = "INSERT INTO app_info.one_day_result(timestamp, guid_masdu_1day, hfrpok, value) VALUES( ?, ?, ?, ?)";
         PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsertTagValues);
         preparedStatement.setTimestamp(1,timestamp);
         preparedStatement.setString(2, guid_masdu_1day);
@@ -73,7 +73,7 @@ public class DistributorJdbc {
     }
 
     public ResultSet selectFromBdTags() throws SQLException {
-        String sqlSelectTagsNames = "SELECT id,  hfrpok, inout FROM app_info.test_table WHERE hfrpok IS NOT NULL";
+        String sqlSelectTagsNames = "SELECT id,  hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
         Statement statement = connection.createStatement();
         return statement.executeQuery(sqlSelectTagsNames);
     }

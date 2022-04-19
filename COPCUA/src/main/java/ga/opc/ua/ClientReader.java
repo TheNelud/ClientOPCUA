@@ -2,6 +2,8 @@ package ga.opc.ua;
 
 import com.google.common.collect.ImmutableList;
 import ga.opc.ua.methods.DistributorJdbc;
+import ga.opc.ua.methods.Thread_1hour;
+import ga.opc.ua.methods.Thread_5min;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -15,12 +17,16 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 public class ClientReader implements Client{
     private static final Map<Integer, String> mapTagsNamesRead = new HashMap<>();
     private static final Map<Integer,String> mapTagsNamesWrite = new HashMap<>();
+    //временно пока не стану умней
+    private static final Map<Integer,String> mapGui5min = new HashMap<>();
+    private static final Map<Integer,String> mapGui1hour= new HashMap<>();
+    private static final Map<Integer,String> mapGui1day = new HashMap<>();
+
     private static final Map<String, String> mapTagAndValue = new HashMap<>(); //для хранения имени тега и его значения
     private static final Logger logger = LoggerFactory.getLogger(ClientReader.class);
 
@@ -39,11 +45,19 @@ public class ClientReader implements Client{
         DistributorJdbc distributorJdbc = new DistributorJdbc();
         ResultSet resultSelectTagsNames = distributorJdbc.selectFromBdTags();
 
+        ExecutorService executorService = Executors.newFixedThreadPool(3); //создание пул потоков
+
         while(resultSelectTagsNames.next()){
             if (resultSelectTagsNames.getString("inout").equals("ВХОД")){
                 mapTagsNamesRead.put(resultSelectTagsNames.getInt("id"),resultSelectTagsNames.getString("hfrpok"));
+                mapGui5min.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_5min"));
+                mapGui1hour.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_hours"));
+                mapGui1day.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_day"));
             }else if(resultSelectTagsNames.getString("inout").equals("ВЫХОД")){
                 mapTagsNamesWrite.put(resultSelectTagsNames.getInt("id"),resultSelectTagsNames.getString("hfrpok"));
+                mapGui5min.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_5min"));
+                mapGui1hour.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_hours"));
+                mapGui1day.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_day"));
             }
         }
 
@@ -56,10 +70,14 @@ public class ClientReader implements Client{
             readServerOpc(client,mapTagsNamesWrite);
 
             for(Map.Entry<String, String> entry : mapTagAndValue.entrySet()){
+//                distributorJdbc.insertInDb1day();
+//                distributorJdbc.insertInDb1hour();
+//                distributorJdbc.insertInDb5min();
+
                 distributorJdbc.insertFromDBTags(entry.getKey(), entry.getValue());
 
             }
-            Thread.sleep(60_000);
+
 
         }
 
