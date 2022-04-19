@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class ClientReader implements Client{
     private static final Map<Integer, String> mapTagsNamesRead = new HashMap<>();
     private static final Map<Integer,String> mapTagsNamesWrite = new HashMap<>();
+    private static final Map<String, String> mapTagAndValue = new HashMap<>(); //для хранения имени тега и его значения
     private static final Logger logger = LoggerFactory.getLogger(ClientReader.class);
 
     public static void main(String[] args) throws Exception {
@@ -37,6 +38,7 @@ public class ClientReader implements Client{
 
         DistributorJdbc distributorJdbc = new DistributorJdbc();
         ResultSet resultSelectTagsNames = distributorJdbc.selectFromBdTags();
+
         while(resultSelectTagsNames.next()){
             if (resultSelectTagsNames.getString("inout").equals("ВХОД")){
                 mapTagsNamesRead.put(resultSelectTagsNames.getInt("id"),resultSelectTagsNames.getString("hfrpok"));
@@ -45,21 +47,32 @@ public class ClientReader implements Client{
             }
         }
 
-        System.out.println("\n\n\nВходные параметры: ");
-        readServerOpc(client,mapTagsNamesRead);
+        //запихнуть в поток
+        while (true) {
+            System.out.println("\n\n\nВходные параметры: ");
+            readServerOpc(client,mapTagsNamesRead);
 
-        System.out.println("\n\n\nВыходные параметры: ");
-        readServerOpc(client,mapTagsNamesWrite);
+            System.out.println("\n\n\nВыходные параметры: ");
+            readServerOpc(client,mapTagsNamesWrite);
 
-        future.complete(client);
+            for(Map.Entry<String, String> entry : mapTagAndValue.entrySet()){
+                distributorJdbc.insertFromDBTags(entry.getKey(), entry.getValue());
+
+            }
+            Thread.sleep(60_000);
+
+        }
+
+//        future.complete(client);
     }
-        
+
     public static void readServerOpc(OpcUaClient client, Map<Integer,String> map) throws ExecutionException, InterruptedException {
         for (Map.Entry<Integer, String> entry : map.entrySet()){
             List<NodeId> nodeIds = ImmutableList.of(new NodeId(entry.getKey(), entry.getValue()));                      // какой тег будем слушать
             CompletableFuture<DataValue> read = client.readValue(0, TimestampsToReturn.Both, nodeIds.get(0));   // начинаем слушать
             Variant variantValue = read.get().getValue();                                                               // вытаскиваем value
             logger.info(entry.getValue() +" -> " + variantValue.getValue());                                            // забиваем лог  Имя_тега -> Value
+            mapTagAndValue.put(entry.getValue(), (String) variantValue.getValue());
         }
     }
 }
