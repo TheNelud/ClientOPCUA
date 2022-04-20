@@ -9,6 +9,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.hibernate.dialect.Ingres9Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +21,18 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class ClientReader implements Client{
+    private static int count = 1 ; //счетчик
+    /*одна крутая мапа
+    1:{1:hfrpok , 2:inout, 3:guid_masdu_5min,4:guid_masdu_1hour, 5:guid_masdu_1day},
+    2:{1:hfrpok , 2:inout, 3:guid_masdu_5min,4:guid_masdu_1hour, 5:guid_masdu_1day}
+    ...
+    */
+    private static final Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
+
+    //две мапы с {1:hfrpok , 2:inout, 3:guid_masdu_5min,4:guid_masdu_1hour, 5:guid_masdu_1day}
     private static final Map<Integer, String> mapTagsNamesRead = new HashMap<>();
     private static final Map<Integer,String> mapTagsNamesWrite = new HashMap<>();
-    //временно пока не стану умней
-    private static final Map<Integer,String> mapGui5min = new HashMap<>();
-    private static final Map<Integer,String> mapGui1hour= new HashMap<>();
-    private static final Map<Integer,String> mapGui1day = new HashMap<>();
 
-    private static final Map<String, String> mapTagAndValue = new HashMap<>(); //для хранения имени тега и его значения
     private static final Logger logger = LoggerFactory.getLogger(ClientReader.class);
 
     public static void main(String[] args) throws Exception {
@@ -41,58 +46,64 @@ public class ClientReader implements Client{
     @Override
     public void run(OpcUaClient client, CompletableFuture<OpcUaClient> future) throws Exception {
         client.connect().get(); //создаем подлючение к серверу opc
-
-        DistributorJdbc distributorJdbc = new DistributorJdbc();
-        ResultSet resultSelectTagsNames = distributorJdbc.selectFromBdTags();
-
+        DistributorJdbc distributorJdbc = new DistributorJdbc(); //создаем подлючение к бд
+        ResultSet resultSelect = distributorJdbc.selectFromBdTags();
         ExecutorService executorService = Executors.newFixedThreadPool(3); //создание пул потоков
 
-        while(resultSelectTagsNames.next()){
-            if (resultSelectTagsNames.getString("inout").equals("ВХОД")){
-                mapTagsNamesRead.put(resultSelectTagsNames.getInt("id"),resultSelectTagsNames.getString("hfrpok"));
-                mapGui5min.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_5min"));
-                mapGui1hour.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_hours"));
-                mapGui1day.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_day"));
-            }else if(resultSelectTagsNames.getString("inout").equals("ВЫХОД")){
-                mapTagsNamesWrite.put(resultSelectTagsNames.getInt("id"),resultSelectTagsNames.getString("hfrpok"));
-                mapGui5min.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_5min"));
-                mapGui1hour.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_hours"));
-                mapGui1day.put(resultSelectTagsNames.getInt("id"), resultSelectTagsNames.getString("guid_masdu_day"));
-            }
-        }
+        // зачем разделение на входные и выходные
+        while(resultSelect.next()){
+            if (resultSelect.getString("inout").equals("ВХОД")){
+                mapTagsNamesRead.put(1, resultSelect.getString("hfrpok"));
+                mapTagsNamesRead.put(2, resultSelect.getString("inout"));
+                mapTagsNamesRead.put(3, resultSelect.getString("guid_masdu_5min"));
+                mapTagsNamesRead.put(4, resultSelect.getString("guid_masdu_hours"));
+                mapTagsNamesRead.put(5, resultSelect.getString("guid_masdu_day"));
+                mapFullSelect.put(count++, new HashMap<>(mapTagsNamesRead));
 
-        //запихнуть в поток
-        while (true) {
-            System.out.println("\n\n\nВходные параметры: ");
-            readServerOpc(client,mapTagsNamesRead);
-
-            System.out.println("\n\n\nВыходные параметры: ");
-            readServerOpc(client,mapTagsNamesWrite);
-
-            for(Map.Entry<String, String> entry : mapTagAndValue.entrySet()){
-//                distributorJdbc.insertInDb1day();
-//                distributorJdbc.insertInDb1hour();
-//                distributorJdbc.insertInDb5min();
-
-                distributorJdbc.insertFromDBTags(entry.getKey(), entry.getValue());
+            }else if(resultSelect.getString("inout").equals("ВЫХОД")){
+                mapTagsNamesWrite.put(1, resultSelect.getString("hfrpok"));
+                mapTagsNamesWrite.put(2, resultSelect.getString("inout"));
+                mapTagsNamesWrite.put(3, resultSelect.getString("guid_masdu_5min"));
+                mapTagsNamesWrite.put(4, resultSelect.getString("guid_masdu_hours"));
+                mapTagsNamesWrite.put(5, resultSelect.getString("guid_masdu_day"));
+                mapFullSelect.put(count++, new HashMap<>(mapTagsNamesWrite));
 
             }
-
-
         }
 
-//        future.complete(client);
+        System.out.println("\n\n\n");
+        readServerOpcGuid(client,mapFullSelect);
+        System.out.println("\n\n\n");
+
+        for (Map.Entry<Integer, Map<Integer, String>> entry : mapFullSelect.entrySet()){
+            System.out.println(entry.getKey() +" : "+ entry.getValue());
+        }
+
+
+        future.complete(client);
     }
 
-    public static void readServerOpc(OpcUaClient client, Map<Integer,String> map) throws ExecutionException, InterruptedException {
-        for (Map.Entry<Integer, String> entry : map.entrySet()){
-            List<NodeId> nodeIds = ImmutableList.of(new NodeId(entry.getKey(), entry.getValue()));                      // какой тег будем слушать
-            CompletableFuture<DataValue> read = client.readValue(0, TimestampsToReturn.Both, nodeIds.get(0));   // начинаем слушать
-            Variant variantValue = read.get().getValue();                                                               // вытаскиваем value
-            logger.info(entry.getValue() +" -> " + variantValue.getValue());                                            // забиваем лог  Имя_тега -> Value
-            mapTagAndValue.put(entry.getValue(), (String) variantValue.getValue());
+    public static void readServerOpcGuid(OpcUaClient client, Map<Integer,Map<Integer,String>> map) throws ExecutionException, InterruptedException {
+        for (Map.Entry<Integer, Map<Integer,String>> entryExternal : map.entrySet()){
+            List<NodeId> nodeIds = ImmutableList.of(new NodeId(entryExternal.getKey(), entryExternal.getValue().get(1)));   // какой тег будем слушать
+            CompletableFuture<DataValue> read = client.readValue(0, TimestampsToReturn.Both, nodeIds.get(0));       // начинаем слушать
+            Variant variantValue = read.get().getValue();                                                                   // вытаскиваем value
+            logger.info(entryExternal.getValue().get(1) +" -> " + variantValue.getValue());                                 // забиваем лог  Имя_тега -> Value
+            entryExternal.getValue().put(6, String.valueOf(variantValue.getValue()));                                       // кладем в нашу мапу Value {1:hfrpok , 2:inout, 3:guid_masdu_5min,4:guid_masdu_1hour, 5:guid_masdu_1day, 6:value}
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 ///////////////////////////////////////////////////Рабочий кусок////////////////////////////////////////////////////////
