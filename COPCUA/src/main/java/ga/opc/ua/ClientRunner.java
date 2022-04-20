@@ -102,7 +102,7 @@ public class ClientRunner {
 
             try {
                 client.run(clientUA, future);
-                future.get(10, TimeUnit.SECONDS);
+                future.get(10, TimeUnit.DAYS);
             } catch (Throwable t) {
                 logger.error("Error running client example: {}", t.getMessage(), t);
                 future.complete(clientUA);

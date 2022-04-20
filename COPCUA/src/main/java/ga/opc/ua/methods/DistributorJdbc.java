@@ -12,73 +12,38 @@ import java.util.Map;
 
 public class DistributorJdbc{
 
-    private static String USER_DB;
-    private static String PASS_DB;
-    private static String URL_DB;
+    private String USER_DB;
+    private String PASS_DB;
+    private String URL_DB;
 
-    Connection connection = DriverManager.getConnection(URL_DB,USER_DB,PASS_DB);
-    Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "0000");
+    public String getUserDb() {
+        return USER_DB;
+    }
+
+    public String getPassDb() {
+        return PASS_DB;
+    }
+
+    public String getUrlDb() {
+        return URL_DB;
+    }
+
+    public void setUSER_DB(String USER_DB) {
+        this.USER_DB = USER_DB;
+    }
+
+    public void setPASS_DB(String PASS_DB) {
+        this.PASS_DB = PASS_DB;
+    }
+
+    public void setURL_DB(String URL_DB) {
+        this.URL_DB = URL_DB;
+    }
 
     public DistributorJdbc() throws SQLException {
     }
 
-    //как сделать красиво?!/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void insertInDb5min(String guid_masdu_5min, String hfrpok, String value) throws SQLException {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsertTagValues = "INSERT INTO app_info.five_min_result(timestamp, guid_masdu_5min, hfrpok, value) VALUES( ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsertTagValues);
-        preparedStatement.setTimestamp(1,timestamp);
-        preparedStatement.setString(2, guid_masdu_5min);
-        preparedStatement.setString(3, hfrpok);
-        preparedStatement.setString(4, value);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-
-    }
-
-    public void insertInDb1hour(String guid_masdu_1hour, String hfrpok, String value) throws SQLException {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsertTagValues = "INSERT INTO app_info.one_hour_result(timestamp, guid_masdu_1hour, hfrpok, value) VALUES( ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsertTagValues);
-        preparedStatement.setTimestamp(1,timestamp);
-        preparedStatement.setString(2, guid_masdu_1hour);
-        preparedStatement.setString(3, hfrpok);
-        preparedStatement.setString(4, value);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-
-    }
-    public void insertInDb1day(String guid_masdu_1day, String hfrpok, String value) throws SQLException {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsertTagValues = "INSERT INTO app_info.one_day_result(timestamp, guid_masdu_1day, hfrpok, value) VALUES( ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsertTagValues);
-        preparedStatement.setTimestamp(1,timestamp);
-        preparedStatement.setString(2, guid_masdu_1day);
-        preparedStatement.setString(3, hfrpok);
-        preparedStatement.setString(4, value);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void insertFromDBTags( String hfrpok, String value) throws SQLException{
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsertTagValues = "INSERT INTO app_info.answer_result(hfrpok, value, timestamp) VALUES( ?, ?, ?)";
-        PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsertTagValues);
-        preparedStatement.setString(1, hfrpok);
-        preparedStatement.setString(2, value);
-        preparedStatement.setTimestamp(3, timestamp);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-    }
-
-    public ResultSet selectFromBdTags() throws SQLException {
-        String sqlSelectTagsNames = "SELECT id,  hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
-        Statement statement = connection.createStatement();
-        return statement.executeQuery(sqlSelectTagsNames);
-    }
-
-    public static void readConfig(File file){
+    public void readConfig(File file){
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         Document document = null;
 
@@ -90,9 +55,9 @@ public class DistributorJdbc{
 
             for (int i = 0; i < paramsNodes.getLength(); i++){
                 switch (paramsNodes.item(i).getNodeName()){
-                    case "USER_DB" -> USER_DB = paramsNodes.item(i).getTextContent();
-                    case "PASS_DB" -> PASS_DB = paramsNodes.item(i).getTextContent();
-                    case "URL_DB" -> URL_DB = paramsNodes.item(i).getTextContent();
+                    case "USER_DB" -> setUSER_DB(paramsNodes.item(i).getTextContent());
+                    case "PASS_DB" -> setPASS_DB(paramsNodes.item(i).getTextContent());
+                    case "URL_DB" -> setURL_DB(paramsNodes.item(i).getTextContent());
                 }
             }
 

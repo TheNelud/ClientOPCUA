@@ -8,7 +8,11 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws SQLException {
-        perfectMagicMaps();
+        final String nameTable = "table_name_5min"; //имя таблицы
+        final String nameColumnGuid = "guid_masdu_5min"; //имя колонки таблицы guid
+
+        String sqlInsert = "INSERT INTO app_info."+nameTable+" (timestamp, "+ nameColumnGuid+",hfrpok, value) VALUES( ?, ?, ?, ?)";
+        System.out.println(sqlInsert);
 
     }
 
