@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 
-public class ClientRunner {
+public class ClientRunner implements Runnable {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -75,6 +75,7 @@ public class ClientRunner {
         );
     }
 
+    @Override
     public void run() {
         future.whenComplete((clientUA, ex) -> {
             if (clientUA != null) {

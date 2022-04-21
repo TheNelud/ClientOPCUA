@@ -7,3 +7,67 @@
     <PORT_OPC>62544</PORT_OPC>
     <PERIOD>10</PERIOD>
 </root>
+
+
+<config>
+
+<!--Config database connect-->
+    <database>
+
+        <ip_db>172.16.205.51</ip_db>
+        <port_db>5432</port_db>
+        <user_db>postgres</user_db>
+        <pass_db>Potok_DU</pass_db>
+
+        <table_read>
+            <name_table>app_info.test_table</name_table>
+            <column_id>id</column_id>
+            <column_name>hfrpok</column_name>
+            <column_inout>inout</column_inout>
+            <column_guid_1>guid_masdu_5min</column_guid_1>
+            <column_guid_2>guid_masdu_hours</column_guid_2>
+            <column_guid_3>guid_masdu_day</column_guid_3>
+        </table_read>
+
+    </database>
+
+<!--Config OPC server connect-->
+    <opc_server>
+
+        <ip_opc_master>172.16.205.234</ip_opc_master>
+        <port_opc_master>62544</port_opc_master>
+
+        <ip_opc_slave>172.16.205.234</ip_opc_slave>
+        <port_opc_slave>62544</port_opc_slave>
+
+    </opc_server>
+
+<!--Config create clients -->
+    <create_client>
+
+        <number_of_threads>4</number_of_threads>
+
+        <client>
+            <id>1</id>
+            <name_table>five_min_result</name_table>
+            <column_guid>guid_masdu_5min</column_guid>
+            <period_work>5</period_work>
+        </client>
+
+        <client>
+            <id>2</id>
+            <name_table>one_hour_result</name_table>
+            <column_guid>guid_masdu_hours</column_guid>
+            <period_work>60</period_work>
+        </client>
+
+        <client>
+            <id>3</id>
+            <name_table>one_day_result</name_table>
+            <column_guid>guid_masdu_day</column_guid>
+            <period_work>60 * 24</period_work>
+        </client>
+
+    </create_client>
+
+</config>

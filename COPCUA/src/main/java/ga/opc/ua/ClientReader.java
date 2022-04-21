@@ -41,19 +41,18 @@ public class ClientReader implements Client {
 
     @Override
     public void run(OpcUaClient client, CompletableFuture<OpcUaClient> future) throws Exception {
+        client.connect().get(); //создаем подлючение к серверу opc
         while (true) {
             int count = 1;
             Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
             Map<Integer, String> mapTagsNamesRead = new HashMap<>();
 
-            client.connect().get(); //создаем подлючение к серверу opc
-
             Connection connection = DriverManager.getConnection("jdbc:postgresql://172.16.205.51:5432/journal_kovikta", "postgres", "Potok_DU");
             Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "0000");
 
-            String sqlSelectTagsNames = "SELECT id,  hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
+            String sqlSelect = "SELECT id,  hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
             Statement statement = connection.createStatement();
-            ResultSet resultSelect = statement.executeQuery(sqlSelectTagsNames);
+            ResultSet resultSelect = statement.executeQuery(sqlSelect);
 
             System.out.println("Potok: " + id);
             // зачем разделение на входные и выходные ///переделать
@@ -88,8 +87,8 @@ public class ClientReader implements Client {
             }
             connectionLocalhost.close();
 
-//            future.complete(client);
             Thread.sleep(period * 60_000L);
         }
+//        future.complete(client);
     }
 }
