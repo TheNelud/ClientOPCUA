@@ -1,6 +1,8 @@
 package ga.opc.ua.methods;
 
 
+import ga.opc.ua.methods.model.Config;
+
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +10,10 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws SQLException {
+        Distributor distributor = new Distributor();
+        Config config = distributor.parse();
 
+        System.out.println(config.toString());
 
     }
 

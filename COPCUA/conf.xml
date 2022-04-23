@@ -2,11 +2,11 @@
 <config>
     <database>
         <!--Connetc to database-->
+        <name>journal_kovikta</name>
         <ip>172.16.205.51</ip>
         <port>5432</port>
         <user>postgres</user>
         <password>Potok_DU</password>
-        <name>journal_kovikta</name>
         <table>
             <name>app_info.test_table</name>
             <column_id>id</column_id>
