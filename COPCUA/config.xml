@@ -1,36 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config>
-<!--Config database connect-->
-    <database>
-        <server_db_master ip="172.16.205.51" port="5432" user="postgres" password="Potok_DU"/>
-        <server_db_slave ip="null" port="null" user="null" password="null"/>
-        <table_read name="app_info.test_table" column_id="id" column_tag="hfrpok" column_inout="inout" column_guid_1="guid_masdu_5min" column_guid_2="guid_masdu_hours" column_guid_3="guid_masdu_day"/>
-    </database>
-
-<!--Config OPC server connect-->
-    <opc_servers>
-        <server_master ip="172.16.205.234" port="62544"/>
-        <server_slave ip="null" port="null"/>
-    </opc_servers>
-
-<!--Config create clients -->
-    <clients>
-        <client id="1" name_table="five_min_result" column_guid="guid_masdu_5min" peiod_worker="5"/>
-        <client id="2" name_table="one_hour_result" column_guid="guid_masdu_hours" peiod_worker="60"/>
-        <client id="3" name_table="one_day_result" column_guid="guid_masdu_day" peiod_worker="60 * 24"/>
-    </clients>
-
-</config>
-
-
-
-
-
-        <!--<root>-->
-        <!--    <USER_DB>postgres</USER_DB>-->
-        <!--    <PASS_DB>Potok_DU</PASS_DB>-->
-        <!--    <URL_DB>jdbc:postgresql://172.16.205.51:5432/journal_kovikta</URL_DB>-->
-        <!--    <IP_OPC>172.16.205.234</IP_OPC>-->
-        <!--    <PORT_OPC>62544</PORT_OPC>-->
-        <!--    <PERIOD>10</PERIOD>-->
-        <!--</root>-->
+<root>
+    <USER_DB>postgres</USER_DB>
+    <PASS_DB>Potok_DU</PASS_DB>
+    <URL_DB>jdbc:postgresql://172.16.205.51:5432/journal_kovikta</URL_DB>
+    <IP_OPC>172.16.205.234</IP_OPC>
+    <PORT_OPC>62544</PORT_OPC>
+    <PERIOD>10</PERIOD>
+</root>

@@ -10,17 +10,15 @@ import java.util.concurrent.TimeUnit;
 public class Start {
     public static void main(String[] args) throws Exception {
 
-        DistributorJdbc distributorJdbc = new DistributorJdbc();
-        distributorJdbc.readConfig(new File("config.xml"));
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
 
         ClientReader clientRunner = new ClientReader(1, "five_min_result", "guid_masdu_5min", 1);
         ClientReader clientRunner1 = new ClientReader(2, "one_hour_result", "guid_masdu_hours", 5);
         ClientReader clientRunner2 = new ClientReader(3, "one_day_result", "guid_masdu_day", 10);
 
         executorService.submit(new ClientRunner(clientRunner));
-        executorService.submit(new ClientRunner(clientRunner1));
-        executorService.submit(new ClientRunner(clientRunner2));
+//        executorService.submit(new ClientRunner(clientRunner1));
+//        executorService.submit(new ClientRunner(clientRunner2));
 
         executorService.shutdown();
         System.out.println("\n\n\nAll tasks submitted\n\n\n");

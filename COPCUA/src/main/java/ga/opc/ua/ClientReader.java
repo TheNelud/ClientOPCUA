@@ -1,7 +1,6 @@
 package ga.opc.ua;
 
 import com.google.common.collect.ImmutableList;
-import ga.opc.ua.methods.DistributorJdbc;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class ClientReader implements Client {
-
     private static final Logger logger = LoggerFactory.getLogger(ClientReader.class);
 
     private int id; //id потока
@@ -48,7 +46,7 @@ public class ClientReader implements Client {
             Map<Integer, String> mapTagsNamesRead = new HashMap<>();
 
             Connection connection = DriverManager.getConnection("jdbc:postgresql://172.16.205.51:5432/journal_kovikta", "postgres", "Potok_DU");
-            Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "0000");
+            Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "postgres");
 
             String sqlSelect = "SELECT id,  hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
             Statement statement = connection.createStatement();
