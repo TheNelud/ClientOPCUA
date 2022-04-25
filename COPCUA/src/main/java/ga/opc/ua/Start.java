@@ -1,6 +1,8 @@
 package ga.opc.ua;
 
+import ga.opc.ua.methods.Distributor;
 import ga.opc.ua.methods.DistributorJdbc;
+import ga.opc.ua.methods.model.Config;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Start {
     public static void main(String[] args) throws Exception {
+
+        Distributor distributor = new Distributor();
+        Config config = distributor.parse();
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 

@@ -69,7 +69,7 @@ public class ClientRunner implements Runnable {
                                 .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
                                 .setApplicationUri("urn:eclipse:milo:examples:client")
                                 .setCertificateValidator(certificateValidator)
-                                .setIdentityProvider(client.getIdentityProvider())
+//                                .setIdentityProvider(client.getIdentityProvider())
                                 .setRequestTimeout(uint(5000))
                                 .build()
         );

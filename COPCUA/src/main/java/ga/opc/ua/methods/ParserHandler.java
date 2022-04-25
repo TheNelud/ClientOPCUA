@@ -58,11 +58,11 @@ public class ParserHandler extends DefaultHandler {
     private boolean isClient = false;
 
     /**Переменные (потом сохранять set) */
-    String ip_db, port_db, user_db, password_db, name_db;
-    String name_tb, column_id, column_tag,column_inout, column_guid_1,column_guid_2, column_guid_3;
-    String opc_ip, opc_port;
-    String id_client,nameTb_client, columnGuid_client;
-    int periodWorker;
+    private String ip_db, port_db, user_db, password_db, name_db;
+    private String name_tb, column_id, column_tag,column_inout, column_guid_1,column_guid_2, column_guid_3;
+    private String opc_ip, opc_port;
+    private String id_client,nameTb_client, columnGuid_client;
+    private int periodWorker;
 
 
     public Config getConfig(){
@@ -177,4 +177,6 @@ public class ParserHandler extends DefaultHandler {
             }
         }
     }
+
+
 }

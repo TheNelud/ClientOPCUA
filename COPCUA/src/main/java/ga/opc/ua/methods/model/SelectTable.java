@@ -9,6 +9,8 @@ public class SelectTable {
     private String columnGuid2;
     private String columnGuid3;
 
+    public SelectTable(){}
+
     public SelectTable(String name,
                        String columnId,
                        String columnTag,
@@ -51,6 +53,34 @@ public class SelectTable {
 
     public String getColumnGuid3() {
         return columnGuid3;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    public void setColumnTag(String columnTag) {
+        this.columnTag = columnTag;
+    }
+
+    public void setColumnInout(String columnInout) {
+        this.columnInout = columnInout;
+    }
+
+    public void setColumnGuid1(String columnGuid1) {
+        this.columnGuid1 = columnGuid1;
+    }
+
+    public void setColumnGuid2(String columnGuid2) {
+        this.columnGuid2 = columnGuid2;
+    }
+
+    public void setColumnGuid3(String columnGuid3) {
+        this.columnGuid3 = columnGuid3;
     }
 
     @Override

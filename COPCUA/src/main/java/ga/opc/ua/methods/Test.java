@@ -11,9 +11,8 @@ import java.util.Map;
 public class Test {
     public static void main(String[] args) throws SQLException {
         Distributor distributor = new Distributor();
-        Config config = distributor.parse();
+        distributor.distrib();
 
-        System.out.println(config.toString());
 
     }
 

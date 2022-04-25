@@ -10,6 +10,8 @@ public class DataBase {
     private String name;
     private List<SelectTable> selectTableList;
 
+    public DataBase(){};
+
     public DataBase(String ip, String port, String user, String password, String name, List<SelectTable> selectTableList) {
         this.ip = ip;
         this.port = port;
@@ -41,6 +43,26 @@ public class DataBase {
 
     public List<SelectTable> getSelectTableList() {
         return selectTableList;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

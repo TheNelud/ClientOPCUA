@@ -6,6 +6,8 @@ public class Clients {
     private String columnGuid;
     private int periodWorker;
 
+    public Clients (){}
+
     public Clients(String id, String nameTable, String columnGuid, int periodWorker) {
         this.id = id;
         this.nameTable = nameTable;
@@ -27,6 +29,22 @@ public class Clients {
 
     public int getPeriodWorker() {
         return periodWorker;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setNameTable(String nameTable) {
+        this.nameTable = nameTable;
+    }
+
+    public void setColumnGuid(String columnGuid) {
+        this.columnGuid = columnGuid;
+    }
+
+    public void setPeriodWorker(int periodWorker) {
+        this.periodWorker = periodWorker;
     }
 
     @Override

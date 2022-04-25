@@ -1,6 +1,8 @@
 package ga.opc.ua;
 
 import com.google.common.collect.ImmutableList;
+import ga.opc.ua.methods.Distributor;
+import ga.opc.ua.methods.model.Config;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -39,7 +41,11 @@ public class ClientReader implements Client {
 
     @Override
     public void run(OpcUaClient client, CompletableFuture<OpcUaClient> future) throws Exception {
+        Distributor distributor = new Distributor();
+        Config config = distributor.parse();
+
         client.connect().get(); //создаем подлючение к серверу opc
+
         while (true) {
             int count = 1;
             Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
