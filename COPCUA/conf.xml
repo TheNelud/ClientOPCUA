@@ -16,7 +16,6 @@
             <column_guid_2>guid_masdu_hours</column_guid_2>
             <column_guid_3>guid_masdu_day</column_guid_3>
         </table>
-
     </database>
     <opc_servers>
         <!--Master OPC server-->
