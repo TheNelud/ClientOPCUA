@@ -8,9 +8,10 @@ import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import java.util.concurrent.CompletableFuture;
 
 public interface Client {
-    default String getEndpointUrl() {
-        return "opc.tcp://172.16.205.234:62544";
+    default String getEndpointUrl(String ip, String port) {
+        return "opc.tcp://"+ip+":"+port;
     }
+
 
     default SecurityPolicy getSecurityPolicy() {
         return SecurityPolicy.None;

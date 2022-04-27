@@ -1,14 +1,20 @@
 package ga.opc.ua.methods.model;
 
 public class OpcServer {
+    private String type;
     private String ip;
     private String port;
 
     public OpcServer(){}
 
-    public OpcServer(String ip, String port) {
+    public OpcServer(String type,String ip, String port) {
+        this.type = type;
         this.ip = ip;
         this.port = port;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getIp() {
@@ -30,7 +36,8 @@ public class OpcServer {
     @Override
     public String toString() {
         return "OpcServer{" +
-                "ip='" + ip + '\'' +
+                "type='" + type + '\'' +
+                ", ip='" + ip + '\'' +
                 ", port='" + port + '\'' +
                 '}';
     }

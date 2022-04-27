@@ -1,36 +1,42 @@
 package ga.opc.ua;
 
 import ga.opc.ua.methods.Distributor;
-import ga.opc.ua.methods.DistributorJdbc;
+import ga.opc.ua.methods.model.Clients;
 import ga.opc.ua.methods.model.Config;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Start {
     public static void main(String[] args) throws Exception {
+        /**Создаем 4 потока, (всегда на +1 кол-ва клиентов)
+         * 1 main
+         * 3 clients */
+        createThreads(4);
+
+    }
+
+    public static void createThreads(int num_threads) throws Exception {
 
         Distributor distributor = new Distributor();
         Config config = distributor.parse();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(num_threads);
 
-        ClientReader clientRunner = new ClientReader(1, "five_min_result", "guid_masdu_5min", 1);
-        ClientReader clientRunner1 = new ClientReader(2, "one_hour_result", "guid_masdu_hours", 5);
-        ClientReader clientRunner2 = new ClientReader(3, "one_day_result", "guid_masdu_day", 10);
-
-        executorService.submit(new ClientRunner(clientRunner));
-//        executorService.submit(new ClientRunner(clientRunner1));
-//        executorService.submit(new ClientRunner(clientRunner2));
-
+        for (int i = 0; i < num_threads; i++){
+            List<Clients> clientsList = new ArrayList<>(config.getClientsList());
+            for (Clients str : clientsList){
+                if (Integer.parseInt(str.getId()) == i){
+                    executorService.submit(new ClientRunner(new ClientReader(Integer.parseInt(str.getId()), str.getNameTable(), str.getColumnGuid(), str.getPeriodWorker())));
+                }
+            }
+        }
         executorService.shutdown();
         System.out.println("\n\n\nAll tasks submitted\n\n\n");
         executorService.awaitTermination(1, TimeUnit.DAYS);
-
-
-
     }
 }
 

@@ -29,6 +29,7 @@ public class ParserHandler extends DefaultHandler {
     private static final String TAG_OPC_SERVER = "opc_server";
     private static final String TAG_IP_OPC = "ip";
     private static final String TAG_PORT_OPC = "port";
+    private static final String TAG_TYPE_OPC = "type";
 
     private static final String TAG_MAIN_CLIENTS = "clients";
     private static final String TAG_CLIENT= "client";
@@ -60,7 +61,7 @@ public class ParserHandler extends DefaultHandler {
     /**Переменные (потом сохранять set) */
     private String ip_db, port_db, user_db, password_db, name_db;
     private String name_tb, column_id, column_tag,column_inout, column_guid_1,column_guid_2, column_guid_3;
-    private String opc_ip, opc_port;
+    private String opc_ip, opc_port, type;
     private String id_client,nameTb_client, columnGuid_client;
     private int periodWorker;
 
@@ -89,7 +90,7 @@ public class ParserHandler extends DefaultHandler {
             case TAG_TABLE_DB -> isSelectTable = true;
             case TAG_MAIN_OPC -> isOpcServers = true;
             case TAG_OPC_SERVER -> isOpcServer = true;
-            case (TAG_MAIN_CLIENTS) -> isClients = true;
+            case TAG_MAIN_CLIENTS -> isClients = true;
             case TAG_CLIENT -> isClient = true;
         }
     }
@@ -113,7 +114,7 @@ public class ParserHandler extends DefaultHandler {
             isOpcServers = false;
         }else if (qName.equals(TAG_OPC_SERVER)){
             isOpcServer = false;
-            OpcServer  opcServer = new OpcServer(opc_ip, opc_port);
+            OpcServer  opcServer = new OpcServer(type,opc_ip, opc_port);
             opcServerList.add(opcServer);
         }
         /**возвращаем местоположение текущего тега
@@ -161,6 +162,7 @@ public class ParserHandler extends DefaultHandler {
          * и записываем его в соответствующюю переменную*/
         if (isOpcServers && isOpcServer){
             switch (currentTagName){
+                case TAG_TYPE_OPC -> type = new String(ch, start, length);
                 case TAG_IP_OPC -> opc_ip = new String(ch, start, length);
                 case TAG_PORT_OPC -> opc_port = new String(ch, start, length);
             }

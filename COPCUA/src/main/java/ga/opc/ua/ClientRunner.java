@@ -1,5 +1,8 @@
 package ga.opc.ua;
 
+import ga.opc.ua.methods.Distributor;
+import ga.opc.ua.methods.model.Config;
+import ga.opc.ua.methods.model.OpcServer;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.client.security.DefaultClientCertificateValidator;
@@ -14,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +38,8 @@ public class ClientRunner implements Runnable {
 
     private DefaultTrustListManager trustListManager;
 
+    private String ip, port; //read conf.xml
+
 
     public ClientRunner(Client client) throws Exception{
         this.client = client;
@@ -42,6 +49,17 @@ public class ClientRunner implements Runnable {
     private OpcUaClient createClient() throws Exception {
         Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "client", "security");
         Files.createDirectories(securityTempDir);
+
+        Distributor distributor = new Distributor();
+        Config config = distributor.parse();
+
+        List<OpcServer> listOpc = new ArrayList<>(config.getOpcServerList());
+        for (OpcServer str : listOpc){
+            if (str.getType().equals("master")){
+                ip = str.getIp();
+                port = str.getPort();
+            }
+        }
         if (!Files.exists(securityTempDir)) {
             throw new Exception("unable to create security dir: " + securityTempDir);
         }
@@ -53,14 +71,13 @@ public class ClientRunner implements Runnable {
         LoggerFactory.getLogger(getClass())
                 .info("security pki dir: {}", pkiDir.getAbsolutePath());
 
-
         trustListManager = new DefaultTrustListManager(pkiDir);
 
         DefaultClientCertificateValidator certificateValidator =
                 new DefaultClientCertificateValidator(trustListManager);
 
         return OpcUaClient.create(
-                client.getEndpointUrl(),
+                client.getEndpointUrl(ip, port),
                 endpoints ->
                         endpoints.stream()
                                 .findFirst(),
@@ -69,7 +86,7 @@ public class ClientRunner implements Runnable {
                                 .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
                                 .setApplicationUri("urn:eclipse:milo:examples:client")
                                 .setCertificateValidator(certificateValidator)
-//                                .setIdentityProvider(client.getIdentityProvider())
+                                .setIdentityProvider(client.getIdentityProvider())
                                 .setRequestTimeout(uint(5000))
                                 .build()
         );

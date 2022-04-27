@@ -1,22 +1,58 @@
 package ga.opc.ua.methods;
 
 
-import ga.opc.ua.methods.model.Config;
-
+import ga.opc.ua.methods.model.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class Test {
     public static void main(String[] args) throws SQLException {
+        distributor();
+    }
+
+    public static void distributor(){
         Distributor distributor = new Distributor();
-        distributor.distrib();
+        Config config = distributor.parse();
+
+        DataBase dataBase = new DataBase();
+        OpcServer opcServer = new OpcServer();
+        Clients clients = new Clients();
+        SelectTable selectTable = new SelectTable();
+
+        List<DataBase> listDB =  new ArrayList<>(config.getDataBaseList());
+        for (DataBase str : listDB){
+            System.out.println(str);
+        }
+
+        String ip = null;
+        String port = null;
+
+        List<OpcServer> listOpc = new ArrayList<>(config.getOpcServerList());
+        for (OpcServer str : listOpc){
+            if (str.getType().equals("master")){
+                ip = str.getIp();
+                port = str.getPort();
+            }
+        }
+        System.out.println(ip + " : " + port );
+
+        String ch = null;
+        List<Clients> listClientMaster = new ArrayList<>(config.getClientsList());
+        for (Clients str : listClientMaster){
+            if (Integer.parseInt(str.getId()) == 1 )
+                System.out.println(str.getId() + " : " + str.getNameTable());
+        }
+        System.out.println(ch);
+
+        System.out.println(config.toString());
+
 
 
     }
-
-
 
 
     /*

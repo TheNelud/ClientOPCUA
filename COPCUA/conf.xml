@@ -20,13 +20,15 @@
     <opc_servers>
         <!--Master OPC server-->
         <opc_server>
+            <type>master</type>>
             <ip>172.16.205.234</ip>
             <port>62544</port>
         </opc_server>
         <!--Slave OPC server-->
         <opc_server>
-            <ip>172.16.205.234</ip>
-            <port>62544</port>
+            <type>slave</type>
+            <ip>127.0.0.1</ip>
+            <port>49320</port>
         </opc_server>
     </opc_servers>
     <clients>
