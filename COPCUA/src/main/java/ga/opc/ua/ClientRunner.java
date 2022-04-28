@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,26 +41,28 @@ public class ClientRunner implements Runnable {
 
     private String ip, port; //read conf.xml
 
+    private final Distributor distributor = new Distributor();
+    private final Config config = distributor.parse();
+    private final List<OpcServer> listOpc = new ArrayList<>(config.getOpcServerList());
+
+    private int counter_exit;
+
+
 
     public ClientRunner(Client client) throws Exception{
         this.client = client;
-
     }
 
-    private OpcUaClient createClient() throws Exception {
+    public ClientRunner(Client client, String ip , String port){
+        this.client = client;
+        this.ip = ip;
+        this.port = port;
+    }
+
+    private OpcUaClient createClient(String ip , String port) throws Exception {
         Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "client", "security");
         Files.createDirectories(securityTempDir);
 
-        Distributor distributor = new Distributor();
-        Config config = distributor.parse();
-
-        List<OpcServer> listOpc = new ArrayList<>(config.getOpcServerList());
-        for (OpcServer str : listOpc){
-            if (str.getType().equals("master")){
-                ip = str.getIp();
-                port = str.getPort();
-            }
-        }
         if (!Files.exists(securityTempDir)) {
             throw new Exception("unable to create security dir: " + securityTempDir);
         }
@@ -92,8 +95,19 @@ public class ClientRunner implements Runnable {
         );
     }
 
+
+    /** подключение к серверу, в зависимости кто живой
+     * 1. Считываем с конфига айпи и порт сервера
+     * 2. Создаем клиента
+     * 3. Если все ок, то ништяк, запускаем клиент ...
+     * 4. Если неочень, запускаем резервного чувака
+     * 5. Если и у чувака все тоже неочень, пробуем потыкать в него палкой три раза
+     * 6. Записываем что за ошибка и выходим*/
+
+
     @Override
     public void run() {
+        /**Проверка когда резервному чуваку плохо*/
         future.whenComplete((clientUA, ex) -> {
             if (clientUA != null) {
                 try {
@@ -103,10 +117,10 @@ public class ClientRunner implements Runnable {
                     logger.error("Error disconnecting:", e.getMessage(), e);
                 }
             } else {
-                logger.error("Error running example: {}", ex.getMessage(), ex);
+                System.err.println("Error running:" +  ex.getMessage());//this
+                logger.error("ERROR running: {}", ex.getMessage(), ex);
                 Stack.releaseSharedResources();
             }
-
             try {
                 Thread.sleep(1000);
                 System.exit(0);
@@ -115,9 +129,27 @@ public class ClientRunner implements Runnable {
             }
         });
 
-        try {
-            OpcUaClient clientUA = createClient();
+        connectToServer("master");
 
+        try {
+            Thread.sleep(999_999_999);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void connectToServer(String role){
+        for (OpcServer str : listOpc){
+            if (str.getType().equals(role)){
+                ip = str.getIp();
+                port = str.getPort();
+            }
+        }
+        System.err.println("Connect in "+ role);
+        OpcUaClient clientUA = null;
+
+        try {
+            clientUA = createClient(ip, port);
             try {
                 client.run(clientUA, future);
                 future.get(10, TimeUnit.DAYS);
@@ -125,14 +157,15 @@ public class ClientRunner implements Runnable {
                 logger.error("Error running client example: {}", t.getMessage(), t);
                 future.complete(clientUA);
             }
+
         } catch (Throwable t) {
-            future.completeExceptionally(t);
+            System.err.println("Error: "+t.getMessage());
+            counter_exit++;
+            if (counter_exit == 3)
+                future.completeExceptionally(t);
+            connectToServer("slave");
+
         }
 
-        try {
-            Thread.sleep(999_999_999);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -27,8 +27,8 @@
         <!--Slave OPC server-->
         <opc_server>
             <type>slave</type>
-            <ip>127.0.0.1</ip>
-            <port>49320</port>
+            <ip>172.16.205.234</ip>
+            <port>62544</port>
         </opc_server>
     </opc_servers>
     <clients>

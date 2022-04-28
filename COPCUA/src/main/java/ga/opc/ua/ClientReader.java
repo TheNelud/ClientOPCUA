@@ -25,13 +25,6 @@ public class ClientReader implements Client {
     private String nameColumnGuid; //имя колонки таблицы guid
     private int period; // период выполнения потока
 
-    private static String USER_DB;
-    private static String PASS_DB;
-    private static String URL_DB;
-
-    public ClientReader() {
-    }
-
     public ClientReader(int id, String nameTable, String nameColumnGuid, int period) {
         this.id = id;
         this.nameTable = nameTable;

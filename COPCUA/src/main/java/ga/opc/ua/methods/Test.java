@@ -18,11 +18,6 @@ public class Test {
         Distributor distributor = new Distributor();
         Config config = distributor.parse();
 
-        DataBase dataBase = new DataBase();
-        OpcServer opcServer = new OpcServer();
-        Clients clients = new Clients();
-        SelectTable selectTable = new SelectTable();
-
         List<DataBase> listDB =  new ArrayList<>(config.getDataBaseList());
         for (DataBase str : listDB){
             System.out.println(str);
@@ -49,8 +44,6 @@ public class Test {
         System.out.println(ch);
 
         System.out.println(config.toString());
-
-
 
     }
 
@@ -109,6 +102,7 @@ public class Test {
     public void magicSelectInsert() throws SQLException {
         String sqlSelect = "SELECT hfrpok, inout, guid_masdu_5min, guid_masdu_hours, guid_masdu_day FROM app_info.test_table WHERE hfrpok IS NOT NULL";
         String sqlInsert = "INSERT INTO app_info.tagname_request(hfrpok, inout, guid_masdu_5min, guid_masdu_1hour, guid_masdu_1day) VALUES( ?, ?, ?, ?, ?)";
+
         Connection connectionTest = DriverManager.getConnection("jdbc:postgresql://172.16.205.51:5432/journal_kovikta", "postgres", "Potok_DU");
         Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "0000");
         System.out.println("Соединение установлено");

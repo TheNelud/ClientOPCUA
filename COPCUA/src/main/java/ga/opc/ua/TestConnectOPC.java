@@ -4,6 +4,7 @@ import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class TestConnectOPC implements Client {
     public static void main(String[] args) throws Exception {
@@ -13,13 +14,27 @@ public class TestConnectOPC implements Client {
     }
 
     @Override
-    public void run(OpcUaClient client, CompletableFuture<OpcUaClient> future) throws Exception {
+    public void run(OpcUaClient client, CompletableFuture<OpcUaClient> future)  {
 
-        client.connect().get(); //создаем подлючение к серверу opc
 
-        System.out.println("\n\nCONNECT\n\n");
+        while (true){
+            try {
+                client.connect().get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
-        future.complete(client);
+            System.out.println("\n\nCONNECT\n\n");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            future.complete(client);
+        }
+
+
+//        future.complete(client);
 
     }
 }

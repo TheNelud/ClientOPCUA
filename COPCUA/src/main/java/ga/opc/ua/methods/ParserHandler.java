@@ -39,16 +39,16 @@ public class ParserHandler extends DefaultHandler {
     private static final String TAG_PERIOD= "period_worker";
 
     /**Сюда все будем класть*/
-    private Config config = new Config();
+    private final Config config = new Config();
 
     /**Текущий тег*/
     private String currentTagName;
 
     /**Куда будем сохранять*/
-    private List<DataBase> dataBaseList = new ArrayList<>();
-    private List<SelectTable> selectTableList = new ArrayList<>();
-    private List<OpcServer> opcServerList = new ArrayList<>();
-    private List<Clients> clientsList = new ArrayList<>();
+    private final List<DataBase> dataBaseList = new ArrayList<>();
+    private final List<SelectTable> selectTableList = new ArrayList<>();
+    private final List<OpcServer> opcServerList = new ArrayList<>();
+    private final List<Clients> clientsList = new ArrayList<>();
 
     /**Проверка, нах ли мы тут?*/
     private boolean isDataBase = false;
