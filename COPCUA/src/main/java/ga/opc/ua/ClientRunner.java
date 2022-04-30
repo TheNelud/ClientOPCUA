@@ -137,7 +137,7 @@ public class ClientRunner implements Runnable {
             e.printStackTrace();
         }
     }
-    
+
     public void connectToServer(String role){
         for (OpcServer str : listOpc){
             if (str.getType().equals(role)){
@@ -161,7 +161,7 @@ public class ClientRunner implements Runnable {
         } catch (Throwable t) {
             System.err.println("Error: "+t.getMessage());
             counter_exit++;
-            if (counter_exit == 3)
+            if (counter_exit == 2)
                 future.completeExceptionally(t);
             connectToServer("slave");
 

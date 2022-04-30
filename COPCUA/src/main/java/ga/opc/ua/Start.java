@@ -15,7 +15,7 @@ public class Start {
         /**Создаем 4 потока, (всегда на +1 кол-ва клиентов)
          * 1 main
          * 3 clients */
-        createThreads(4);
+        createThreads(2);
 
     }
 

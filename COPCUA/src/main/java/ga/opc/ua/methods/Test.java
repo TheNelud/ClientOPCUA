@@ -20,7 +20,10 @@ public class Test {
 
         List<DataBase> listDB =  new ArrayList<>(config.getDataBaseList());
         for (DataBase str : listDB){
-            System.out.println(str);
+            System.out.println(str.toString());
+            for (SelectTable selectTable : str.getSelectTableList()){
+                System.out.println(selectTable.getName());
+            }
         }
 
         String ip = null;

@@ -35,21 +35,21 @@
         <!--Сlient that reads and writes every 5 minutes -->
         <client>
             <id>1</id>
-            <name_table>five_min_result</name_table>
+            <name_table>app_info.five_min_result</name_table>
             <column_guid>guid_masdu_5min</column_guid>
             <period_worker>5</period_worker>
         </client>
         <!--Сlient that reads and writes every hour -->
         <client>
             <id>2</id>
-            <name_table>one_hour_result</name_table>
+            <name_table>app_info.one_hour_result</name_table>
             <column_guid>guid_masdu_hours</column_guid>
             <period_worker>60</period_worker>
         </client>
         <!--Сlient that reads and writes every day-->
         <client>
             <id>3</id>
-            <name_table>one_day_result</name_table>
+            <name_table>app_info.one_day_result</name_table>
             <column_guid>guid_masdu_day</column_guid>
             <period_worker>1440</period_worker>
         </client>
