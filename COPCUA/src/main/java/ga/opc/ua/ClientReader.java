@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class ClientReader implements Client {
-    private static final Logger logger = LoggerFactory.getLogger(ClientReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(java.io.FileReader.class);
 
     private final int id; //id потока
     private final String nameTable; //имя таблицы
@@ -31,6 +31,22 @@ public class ClientReader implements Client {
     private final Distributor distributor = new Distributor();
     private final Config config = distributor.parse();
     private final List<DataBase> listDB =  new ArrayList<>(config.getDataBaseList());
+
+    private final Map <Integer, Map<Integer, String>> fullValueMap = new HashMap<>();
+    private final Map <Integer, String> noFullValueMap = new HashMap<>();
+
+    private final Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
+    private final Map<Integer, String> mapTagsNamesRead = new HashMap<>();
+
+    private final String valueStr =  "0.0"; // default value if is empty
+
+    private final String sqlSelect = null;
+    private Statement statement = null;
+    private Connection connection = null;
+    private Connection connectionLocalHost = null;
+
+
+
 
 
     public ClientReader(int id, String nameTable, String nameColumnGuid, int period) {
@@ -48,18 +64,22 @@ public class ClientReader implements Client {
         while (true) {
 
             System.out.println("Potok: " + id);
+            logger.info("Create client - "+ id + " : successfully");
 
+
+            int count = 1;
             for (Map.Entry<Integer, Map<Integer, String>> entryExternal : sqlSelect().entrySet()) {
                 List<NodeId> nodeIds = ImmutableList.of(new NodeId(entryExternal.getKey(), entryExternal.getValue().get(1)));   // какой тег будем слушать
                 CompletableFuture<DataValue> read = client.readValue(0, TimestampsToReturn.Both, nodeIds.get(0));       // начинаем слушать
                 Variant variantValue = read.get().getValue();                                                                   // вытаскиваем value
                 logger.info(entryExternal.getValue().get(1) + " -> " + variantValue.getValue());                                 // забиваем лог  Имя_тега -> Value
-                entryExternal.getValue().put(4, String.valueOf(variantValue.getValue()));                                       // кладем в нашу мапу Value {1:hfrpok , 2:inout, 3:guid_masdu_5min,4:guid_masdu_1hour, 5:guid_masdu_1day, 6:value}
+                entryExternal.getValue().put(4, String.valueOf(variantValue.getValue()));                                       // кладем в нашу мапу Value {1:hfrpok , 2:inout, 3:guid_masdu_ ,4:value}
+                //_________________________________________________________________________//
+                noFullValueMap.put(0, entryExternal.getValue().get(1));
+                noFullValueMap.put(1, String.valueOf(variantValue.getValue()));
+                fullValueMap.put(count++, new HashMap<>(noFullValueMap));
             }
-
-            sqlInsert(sqlSelect());
-
-
+            sqlInsert(fullValueMap);
             Thread.sleep(period * 60_000L);
         }
 //        future.complete(client);
@@ -75,18 +95,20 @@ public class ClientReader implements Client {
      */
 
     private Map<Integer, Map<Integer, String>> sqlSelect() {
-        Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
-        Map<Integer, String> mapTagsNamesRead = new HashMap<>();
+//        Map<Integer, Map<Integer, String>> mapFullSelect = new HashMap<>();
+//        Map<Integer, String> mapTagsNamesRead = new HashMap<>();
         int count = 1;
         String sqlSelect = null;
-        Statement statement = null;
-        Connection connection = null;
+//        Statement statement = null;
+//        Connection connection = null;
         for (DataBase dataBase : listDB) {
             try {
                 connection = DriverManager.getConnection("jdbc:postgresql://" + dataBase.getIp() + ":" + dataBase.getPort() + "/" + dataBase.getName(), dataBase.getUser(), dataBase.getPassword());
                 statement = connection.createStatement();
+                logger.info("Connection in database: successfully");
             } catch (SQLException e) {
-                System.err.println("Error in connection: " + e.getSQLState() + e.getMessage());
+                logger.error("Error in connection: " +e.getSQLState() + e.getMessage());
+//                System.err.println("Error in connection: " + e.getSQLState() + e.getMessage());
             }
             for (SelectTable selectTable : dataBase.getSelectTableList()) {
                 sqlSelect = "SELECT " + selectTable.getColumnId() + ",  " +
@@ -108,6 +130,7 @@ public class ClientReader implements Client {
                 mapFullSelect.put(count++, new HashMap<>(mapTagsNamesRead));
             }
         } catch (SQLException e) {
+            logger.error("Error in request: " +e.getSQLState() + e.getMessage());
             System.err.println("Error in request: " + e.getSQLState() + e.getMessage());
         }
 
@@ -115,46 +138,61 @@ public class ClientReader implements Client {
             statement.close();
             connection.close();
         } catch (SQLException e) {
-            System.err.println("Error in close "+ e.getMessage() + e.getSQLState());
+            logger.error("Error in close: " +e.getSQLState() + e.getMessage());
+//            System.err.println("Error in close "+ e.getMessage() + e.getSQLState());
         }
 
         return mapFullSelect;
     }
 
+    /**Метод для записи пришедшей памы с данными в базу данных*/
     private void sqlInsert(Map<Integer, Map <Integer, String>> map){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlInsert = "INSERT INTO " + nameTable + " (timestamp, " + nameColumnGuid + ", hfrpok, value) VALUES ( ?, ?, ?, ?)";
-        String sqlSelect = null;
-        Statement statement = null;
-        Connection connection = null;
-        Connection connectionLocalHost = null;
+//        String sqlInsert = "INSERT INTO app_info.\"5min_params\" (val,timestamp,hfrpok_id) VALUES ( ?, ?, ?);";
+        String sqlInsert = "INSERT INTO "+nameTable+" (val,timestamp,hfrpok_id) VALUES ( ?, ?, ?);";
+
         for (DataBase dataBase : listDB) {
             try {
-                connection = DriverManager.getConnection("jdbc:postgresql://" + dataBase.getIp() + ":" + dataBase.getPort() + "/" + dataBase.getName(), dataBase.getUser(), dataBase.getPassword());
-                connectionLocalHost = DriverManager.getConnection("jdbc:postgres://127.0.0.1:5432/journal_kovikta", "postgres", "postger");
+                connection = DriverManager.getConnection("jdbc:postgresql://" +
+                        dataBase.getIp() + ":" +
+                        dataBase.getPort() + "/" +
+                        dataBase.getName(),
+                        dataBase.getUser(),
+                        dataBase.getPassword());
+                connectionLocalHost = DriverManager.getConnection("jdbc:postgresql://localhost:5432/journal_kovikta", "postgres", "postgres");
+                logger.info("Connection in database: successfully");
             } catch (SQLException e) {
-                System.err.println("Error in connection: " + e.getSQLState() + e.getMessage());
+                logger.error("Error in connection: " + e.getMessage());
             }
         }
+        PreparedStatement preparedStatement = null;
         for (Map.Entry<Integer, Map<Integer, String>> entryExternal : map.entrySet()) {
-            PreparedStatement preparedStatement = null;
             try {
-                preparedStatement = connection.prepareStatement(sqlInsert);
-                preparedStatement.setTimestamp(1, timestamp);
-                preparedStatement.setString(2, entryExternal.getValue().get(3));// guid
-                preparedStatement.setString(3, entryExternal.getValue().get(1)); // тег
-                preparedStatement.setString(4, entryExternal.getValue().get(4));  // его значение
+                preparedStatement = connectionLocalHost.prepareStatement(sqlInsert);
+                preparedStatement.setTimestamp(2, timestamp);
+                preparedStatement.setString(3, entryExternal.getValue().get(0)); // тег
+
+                System.err.println("Tag name: "+entryExternal.getValue().get(0)+"\nValue: "+ entryExternal.getValue().get(1));
+
+                if (String.valueOf(entryExternal.getValue().get(1)) == null) {
+                    preparedStatement.setDouble(1, Double.parseDouble(entryExternal.getValue().get(1)));
+                }else{
+                    preparedStatement.setDouble(1, 0); // его значение
+                }
+
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
             } catch (SQLException e) {
-                System.err.println("Error in prepare statement: " + e.getSQLState() + e.getMessage());
+                logger.error("Error in prepare statement: " +e.getSQLState() + e.getMessage());
+
             }
         }
 
         try {
-            connection.close();
+            connectionLocalHost.close();
         } catch (SQLException e) {
-            System.err.println("Error in close "+ e.getMessage() + e.getSQLState());
+            logger.error("Error in close: " +e.getSQLState() + e.getMessage());
+//            System.err.println("Error in close "+ e.getMessage() + e.getSQLState());
         }
 
 

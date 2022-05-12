@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <database>
+        <!--Connetc to database-->
+        <name>journal_kovikta</name>
+        <ip>172.16.205.51</ip>
+        <port>5432</port>
+        <user>postgres</user>
+        <password>Potok_DU</password>
+        <table>
+            <name>app_info.test_table</name>
+            <column_id>id</column_id>
+            <column_tag>hfrpok</column_tag>
+            <column_inout>inout</column_inout>
+            <column_guid_1>guid_masdu_5min</column_guid_1>
+            <column_guid_2>guid_masdu_hours</column_guid_2>
+            <column_guid_3>guid_masdu_day</column_guid_3>
+        </table>
+    </database>
+    <opc_servers>
+        <!--Master OPC server-->
+        <opc_server>
+            <type>master</type>>
+            <ip>172.16.205.234</ip>
+            <port>62544</port>
+        </opc_server>
+        <!--Slave OPC server-->
+        <opc_server>
+            <type>slave</type>
+            <ip>172.16.205.234</ip>
+            <port>62544</port>
+        </opc_server>
+    </opc_servers>
+    <clients>
+        <!--Сlient that reads and writes every 5 minutes -->
+        <client>
+            <id>1</id>
+            <name_table>app_info."5min_params"</name_table> <!-- из за сраной 5 надо экранировать-->
+            <column_guid>guid_masdu_5min</column_guid>
+            <period_worker>5</period_worker>
+        </client>
+        <!--Сlient that reads and writes every hour -->
+        <client>
+            <id>2</id>
+            <name_table>app_info.hour_params</name_table>
+            <column_guid>guid_masdu_hours</column_guid>
+            <period_worker>60</period_worker>
+        </client>
+        <!--Сlient that reads and writes every day-->
+        <client>
+            <id>3</id>
+            <name_table>app_info.sut_params</name_table>
+            <column_guid>guid_masdu_day</column_guid>
+            <period_worker>1440</period_worker>
+        </client>
+    </clients>
+</config>

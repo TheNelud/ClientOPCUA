@@ -3,16 +3,18 @@ package ga.opc.ua;
 import ga.opc.ua.methods.Distributor;
 import ga.opc.ua.methods.model.Config;
 import ga.opc.ua.methods.model.OpcServer;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.client.security.DefaultClientCertificateValidator;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.security.DefaultTrustListManager;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileReader;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +33,8 @@ public class ClientRunner implements Runnable {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+//    private final Logger logger = LoggerFactory.getLogger(java.io.FileReader.class);
+     private final Logger logger = Logger.getLogger(FileReader.class);
 
     private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
 
@@ -68,11 +71,6 @@ public class ClientRunner implements Runnable {
         }
 
         File pkiDir = securityTempDir.resolve("pki").toFile();
-
-        LoggerFactory.getLogger(getClass())
-                .info("security dir: {}", securityTempDir.toAbsolutePath());
-        LoggerFactory.getLogger(getClass())
-                .info("security pki dir: {}", pkiDir.getAbsolutePath());
 
         trustListManager = new DefaultTrustListManager(pkiDir);
 
@@ -114,11 +112,11 @@ public class ClientRunner implements Runnable {
                     clientUA.disconnect().get();
                     Stack.releaseSharedResources();
                 } catch (InterruptedException | ExecutionException e) {
-                    logger.error("Error disconnecting:", e.getMessage(), e);
+                    logger.error("Error disconnecting: "+ e);
                 }
             } else {
                 System.err.println("Error running:" +  ex.getMessage());//this
-                logger.error("ERROR running: {}", ex.getMessage(), ex);
+                logger.error("ERROR running: {}"+ ex);
                 Stack.releaseSharedResources();
             }
             try {
@@ -145,21 +143,25 @@ public class ClientRunner implements Runnable {
                 port = str.getPort();
             }
         }
-        System.err.println("Connect in "+ role);
+        System.err.println("Connecting to the "+ role +" server.");
+        logger.info("Connecting to the " + role +" server.");
+
         OpcUaClient clientUA = null;
 
         try {
             clientUA = createClient(ip, port);
             try {
                 client.run(clientUA, future);
+                logger.info("Connecting to the " + role + " : successfulle");
                 future.get(10, TimeUnit.DAYS);
             } catch (Throwable t) {
-                logger.error("Error running client example: {}", t.getMessage(), t);
+                logger.error("Error running client: " +  t);
                 future.complete(clientUA);
             }
 
         } catch (Throwable t) {
-            System.err.println("Error: "+t.getMessage());
+            logger.error(t.getMessage());
+//            System.err.println("Error: "+t.getMessage());
             counter_exit++;
             if (counter_exit == 2)
                 future.completeExceptionally(t);

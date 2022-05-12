@@ -11,8 +11,39 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws SQLException {
-        distributor();
+        insertToDB();
     }
+
+
+
+    public static void insertToDB() throws SQLException {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlInsert = "INSERT INTO app_info.hour_params (val, hfrpok_id) VALUES( ?, ?);";
+        Connection connectionLocalhost = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/journal_kovikta", "postgres", "postgres");
+        System.out.println("Соединение установлено");
+
+        PreparedStatement preparedStatement = connectionLocalhost.prepareStatement(sqlInsert);
+
+        String  number = null;
+
+        if (number == null)
+            number = "0";
+
+        preparedStatement.setDouble(1, Double.parseDouble(number));
+
+
+//        preparedStatement.setObject(2, timestamp);
+        preparedStatement.setString(2, "Fuck you too too");
+
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        connectionLocalhost.close();
+
+
+
+    }
+
+
 
     public static void distributor(){
         Distributor distributor = new Distributor();
